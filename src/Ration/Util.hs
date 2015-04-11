@@ -15,6 +15,7 @@ module Ration.Util(
   , binToDouble
   , debugMsg
   , eitherWidget
+  , saveText
   ) where
 
 import Prelude hiding (div, id)
@@ -217,3 +218,6 @@ debugMsg = liftIO . writeLog . show
 
 eitherWidget :: Widget a -> Widget b -> Widget (Either a b)
 eitherWidget wa wb = (return . Left =<< wa) <|> (return . Right =<< wb)
+
+saveText :: String -> String -> IO ()
+saveText = ffi "(function(str, filename) {saveText(str, filename);})"

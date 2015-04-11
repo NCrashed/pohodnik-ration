@@ -2,6 +2,7 @@ module Ration.Application where
 
 import Prelude hiding (div, id)
 import Haste.HPlay.View hiding (head)
+import Haste.Serialize (toJSON)
 import Control.Monad.IO.Class
 import Ration.Layout
 import Ration.Util
@@ -13,6 +14,7 @@ data ApplicationState =
 
 data Route = 
     RouteLoad
+  | RouteSave
   | RouteMainCreate
   | RouteMainLoad
   deriving (Show)
@@ -28,6 +30,11 @@ runApplication state = wloop state go
       where
         routing RouteMainCreate = return $ AppMain Nothing 
         routing RouteMainLoad = return $ AppMain selected
+        routing RouteSave = case selected of 
+            Just s -> do
+              liftIO $ saveText (show $ toJSON s) "layout.json"
+              return localState
+            Nothing -> return localState
         routing route = fail $ "invalid route in config state " ++ show route
 
         calc (newLayouts, newSelected) = return $ AppLoad newLayouts newSelected
@@ -45,7 +52,10 @@ routeWidget state = div ! atr "class" "row"
   <<< go state
   where
     go (AppLoad _ Nothing) = bigBtn RouteMainCreate "Создать раскладку"
-    go (AppLoad _ (Just _)) = bigBtn RouteMainLoad "Открыть раскладку" <|> bigBtn RouteMainCreate "Создать раскладку"
+    go (AppLoad _ (Just _)) = 
+          bigBtn RouteMainLoad "Открыть раскладку" 
+      <|> bigBtn RouteSave "Сохранить раскладку" 
+      <|> bigBtn RouteMainCreate "Создать раскладку"
     go (AppMain {}) = bigBtn RouteLoad "Назад"
 
     bigBtn v s = cbutton v s <! [atr "class" "btn btn-primary btn-lg"]

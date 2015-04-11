@@ -51,4 +51,9 @@ myJs = "var mouse = {x: 0, y: 0};\n" ++
       "document.addEventListener('mousemove', function(e){\n" ++
       "mouse.x = e.clientX || e.pageX;\n" ++
       "mouse.y = e.clientY || e.pageY\n" ++
-      "}, false);"
+      "}, false);\n" ++
+
+      "function saveText(str, fileName) {\n" ++
+      "var blob = new Blob([str], {type: \"text/plain;charset=utf-8\"});\n" ++
+      "saveAs(blob, fileName);\n" ++
+      "}\n"
