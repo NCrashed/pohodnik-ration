@@ -1,0 +1,31 @@
+name:                pohodnik-ration
+version:             0.1.0.0       
+homepage:            https://github.com/NCrashed/pohodnik-ration
+license:             BSD3
+license-file:        LICENSE
+author:              Anton Gushcha
+maintainer:          ncrashed@gmail.com
+category:            Web
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+source-repository head
+  type: git
+  location: https://github.com/NCrashed/pohodnik-ration
+
+flag haste-inst
+  Description: either if it is being compiled with haste-inst or with cabal
+  Default: False
+
+executable bmstu-radio-problem-haste
+  main-is:             Main.hs
+  GHC-Options:         -O2
+  default-language:    Haskell2010
+  hs-source-dirs:      src
+  if flag(haste-inst)
+    build-depends: base, transformers -any, haste-lib -any, haste-perch >= 0.1, hplayground >= 0.1.2, MonadRandom >= 0.3, random, monad-coroutine >= 0.9, deepseq >= 1.4, time >= 1.5
+    buildable: True
+  else
+    build-depends: base, transformers -any, haste-compiler -any, haste-perch >= 0.1, hplayground >= 0.1.2, MonadRandom >= 0.3, random, monad-coroutine >= 0.9, deepseq >= 1.4, time >= 1.5
+    buildable: True
