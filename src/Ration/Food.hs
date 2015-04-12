@@ -10,7 +10,7 @@ data Food = Food {
     foodName :: String
   , foodDescr :: String
   }
-  deriving (Typeable, Show)
+  deriving (Typeable, Show, Eq)
 
 
 instance Serialize Food where

@@ -9,7 +9,7 @@ import Ration.Util
 import Ration.Load 
 
 data ApplicationState =
-    AppLoad [FoodLayout] (Maybe FoodLayout)
+    AppLoad [FoodLayout] (Maybe Int)
   | AppMain (Maybe FoodLayout)
 
 data Route = 
@@ -22,6 +22,10 @@ data Route =
 initialState :: ApplicationState
 initialState = AppLoad [] Nothing
 
+mind :: [a] -> Maybe Int -> Maybe a 
+mind xs Nothing = Nothing
+mind xs (Just i) = Just $ xs !! i
+
 runApplication :: ApplicationState -> Widget ()
 runApplication state = wloop state go
   where
@@ -29,10 +33,10 @@ runApplication state = wloop state go
     go localState@(AppLoad layouts selected) = handleRouting localState (loadWidget layouts selected) routing calc
       where
         routing RouteMainCreate = return $ AppMain Nothing 
-        routing RouteMainLoad = return $ AppMain selected
+        routing RouteMainLoad = return $ AppMain $ layouts `mind` selected
         routing RouteSave = case selected of 
-            Just s -> do
-              liftIO $ saveText (show $ toJSON s) "layout.json"
+            Just i -> do
+              liftIO $ saveText (show $ toJSON $ layouts !! i) "layout.json"
               return localState
             Nothing -> return localState
         routing route = fail $ "invalid route in config state " ++ show route
@@ -48,7 +52,7 @@ handleRouting localState wa routing calc = do
 
 routeWidget :: ApplicationState -> Widget Route
 routeWidget state = div ! atr "class" "row" 
-  <<< div ! atr "class" "col-md-4 col-md-offset-5"
+  <<< div ! atr "class" "col-md-8 col-md-offset-2"
   <<< go state
   where
     go (AppLoad _ Nothing) = bigBtn RouteMainCreate "Создать раскладку"

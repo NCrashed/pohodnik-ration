@@ -10,7 +10,7 @@ data Person = Person {
     personName :: String
   , personSurname :: Maybe String
   , personPatronim :: Maybe String
-} deriving (Typeable, Show)
+} deriving (Typeable, Show, Eq)
 
 instance Serialize Person where
   toJSON v = Dict $ [

@@ -17,7 +17,7 @@ data FoodLayout = FoodLayout {
   , foodLayoutPersons :: [Person]
   , foodLayoutDays :: [LayoutDay]
   , foodLayoutFood :: [Food]
-} deriving (Typeable, Show)
+} deriving (Typeable, Show, Eq)
 
 instance Serialize FoodLayout where
   toJSON v = Dict $ [
@@ -36,12 +36,21 @@ instance Serialize FoodLayout where
     <*> j .: "foodLayoutDays"
     <*> j .: "foodLayoutFood"
     where readDay = parseTimeOrError True defaultTimeLocale (iso8601DateFormat Nothing)
-    
+
 data LayoutDay = LayoutDay
-  deriving (Typeable, Show)
+  deriving (Typeable, Show, Eq)
 
 instance Serialize LayoutDay where
   toJSON v = Dict $ [
     ]
 
   parseJSON j = pure LayoutDay
+
+newFoodLayout :: String -> FoodLayout
+newFoodLayout name = FoodLayout {
+    foodLayoutName = name
+  , foodLayoutDate = Nothing
+  , foodLayoutPersons = []
+  , foodLayoutDays = []
+  , foodLayoutFood = []
+  }
